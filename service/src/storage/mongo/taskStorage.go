@@ -42,11 +42,9 @@ func (ts *TaskStorage) StoreTask(task *models.Task) string {
 
 // ReadTask func
 func (ts *TaskStorage) ReadTask(id string) *models.Task {
-	oid, err := objectid.FromHex(id)
-	core.CheckErr(err)
 	var res models.Task
 	ts.coll.FindOne(context.Background(),
-		bson.D{{"id", oid}}).Decode(&res)
+		bson.D{{"id", id}}).Decode(&res)
 	return &res
 }
 

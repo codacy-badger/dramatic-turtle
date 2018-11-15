@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 
@@ -50,13 +51,26 @@ func createTask(name string) string {
 	})
 }
 
+func createLogEntry(taskID string) string {
+	logStorage := dataStorage.GetTaskStorage().GetLog(taskID)
+	return logStorage.AppendLogEntry(&models.LogEntry{
+		ID:    "",
+		Start: time.Now().UTC(),
+		End:   time.Now().UTC(),
+	})
+}
+
 func endpoint(w http.ResponseWriter, r *http.Request) {
 	var req map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&req)
 	core.CheckErr(err)
 	query := req["query"].(string)
 
-	schema := getSchema(getTaskByID, getAllTasks, createTask)
+	schema := getSchema(
+		getTaskByID,
+		getAllTasks,
+		createTask,
+		createLogEntry)
 	params := graphql.Params{
 		Schema:        schema,
 		RequestString: query,

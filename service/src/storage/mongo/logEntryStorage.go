@@ -27,20 +27,17 @@ func createLogEntryStorage(m *Mongo, coll *mongo.Collection, taskID string) *Log
 
 // AppendLogEntry func
 func (les *LogEntryStorage) AppendLogEntry(e *models.LogEntry) string {
-	taskID, err := objectid.FromHex(les.taskID)
-	core.CheckErr(err)
-
 	e.Start = e.Start.UTC()
 	e.End = e.Start.UTC()
 
 	e.ID = objectid.New().Hex()
 	filter := bson.D{
-		{"id", objectid.ObjectID(taskID)},
+		{"id", les.taskID},
 	}
 	update := bson.D{
 		{"$push", bson.D{{"logs", *e}}},
 	}
-	_, err = les.coll.UpdateOne(context.Background(), filter, update)
+	_, err := les.coll.UpdateOne(context.Background(), filter, update)
 	core.CheckErr(err)
 
 	return e.ID

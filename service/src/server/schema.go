@@ -60,7 +60,8 @@ func init() {
 func getSchema(
 	getTaskByID func(id string) Task,
 	getAllTasks func() []Task,
-	createTask func(name string) string) graphql.Schema {
+	createTask func(name string) string,
+	createLogEntry func(taskID string) string) graphql.Schema {
 	queryObject = graphql.NewObject(graphql.ObjectConfig{
 		Name: "query",
 		Fields: graphql.Fields{
@@ -99,6 +100,22 @@ func getSchema(
 						return createTask(name), nil
 					}
 					return nil, errors.New("Could not create task. Please provide sufficient information.")
+				},
+			},
+			"createLogEntry": &graphql.Field{
+				Type:        graphql.String,
+				Description: "",
+				Args: graphql.FieldConfigArgument{
+					"taskID": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+					taskID, ok := params.Args["taskID"].(string)
+					if ok {
+						return createLogEntry(taskID), nil
+					}
+					return nil, errors.New("Could not create logentry. Please provide sufficient information.")
 				},
 			},
 		},
