@@ -94,8 +94,11 @@ func getSchema(
 					},
 				},
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					name := params.Args["name"].(string)
-					return createTask(name), nil
+					name, ok := params.Args["name"].(string)
+					if ok {
+						return createTask(name), nil
+					}
+					return nil, errors.New("Could not create task. Please provide sufficient information.")
 				},
 			},
 		},
