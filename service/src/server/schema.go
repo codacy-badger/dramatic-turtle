@@ -57,6 +57,7 @@ func init() {
 	})
 }
 
+//TODO (HAW): Resolve these functions into interface or sth.
 func getSchema(
 	getTaskByID func(id string) Task,
 	getAllTasks func() []Task,
