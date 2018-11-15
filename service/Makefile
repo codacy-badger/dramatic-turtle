@@ -1,0 +1,45 @@
+ifeq ($(OS),Windows_NT)
+	HOST_OS := windows
+else
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+        HOST_OS := linux
+    endif
+    ifeq ($(UNAME_S),Darwin)
+        HOST_OS := darwin
+    endif
+endif
+
+ifeq ($(HOST_OS),windows)
+	PROGRAM := Program.exe
+else
+	PROGRAM := program
+endif
+
+
+init:
+	$(MAKE) get
+	$(MAKE) build
+
+build:
+	CGO_ENABLED=1 GOOS=$(HOST_OS) go build -a -installsuffix cgo -o "./bin/$(PROGRAM)" "./src/main/program.go"
+	cp "./src/main/config.json" "./bin/config.json"
+
+run:
+	$(MAKE) build
+	./bin/$(PROGRAM)
+
+clean:
+	rm "./bin" -rf
+
+get:
+	go get github.com/gorilla/mux
+	go get github.com/mongodb/mongo-go-driver/mongo
+	go get github.com/graphql-go/graphql
+
+docker-build-image:
+	$(MAKE) clean
+	docker build -t dramatic-turtle .
+
+docker-run-image:
+	docker run -d -p 8080:8080 -t dramatic-turtle

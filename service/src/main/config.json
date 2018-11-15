@@ -1,0 +1,14 @@
+{
+    "server": {
+        "port": 8080
+    },
+    "storage": {
+        "mongodb": {
+            "active": true,
+            "connection": {
+                "url": "mongodb://127.0.0.1:27017",
+                "database": "dramatic-turtle"
+            }
+        }
+    }
+}

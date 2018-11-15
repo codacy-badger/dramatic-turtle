@@ -1,0 +1,8 @@
+matrix:
+  include:
+    - language: go
+      sudo: required
+      services:
+        - docker
+      before_install: cd service
+      script: sh build.sh

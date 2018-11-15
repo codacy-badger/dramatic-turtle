@@ -1,0 +1,2 @@
+curl -X GET http://localhost:8080/v1/graphql -H Content-Type: application/json -d { "query": "query { task(id:\"$(SOME_ID)\") { id } }" }
+curl -X GET http://localhost:8080/v1/graphql -H Content-Type: application/json -d { "query": "query { tasks { id } }" }

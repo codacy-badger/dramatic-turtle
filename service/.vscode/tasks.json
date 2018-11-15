@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Make Docker image",
+            "type": "shell",
+            "command": "make docker-build"
+        },
+        {
+            "label": "Make Docker image and run it",
+            "type": "shell",
+            "command": "make docker-build && make docker-run"
+        },
+        {
+            "label": "Docker: Remove dangling images",
+            "type": "shell",
+            "command": "docker rmi $(docker images --filter “dangling=true” -q --no-trunc)"
+        },
+        {
+            "label": "Docker: Remove dangling volumes",
+            "type": "shell",
+            "command": "docker volume rm $(docker volume ls -qf dangling=true)"
+        }
+    ]
+}
