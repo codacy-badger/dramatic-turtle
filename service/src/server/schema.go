@@ -59,7 +59,8 @@ func init() {
 
 func getSchema(
 	getTaskByID func(id string) Task,
-	getAllTasks func() []Task) graphql.Schema {
+	getAllTasks func() []Task,
+	createTask func(name string) string) graphql.Schema {
 	queryObject = graphql.NewObject(graphql.ObjectConfig{
 		Name: "query",
 		Fields: graphql.Fields{
@@ -82,6 +83,19 @@ func getSchema(
 						return getTaskByID(id), nil
 					}
 					return nil, errors.New("Could not find a matching task")
+				},
+			},
+			"createTask": &graphql.Field{
+				Type:        graphql.String,
+				Description: "",
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+					name := params.Args["name"].(string)
+					return createTask(name), nil
 				},
 			},
 		},

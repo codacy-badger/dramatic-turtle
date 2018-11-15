@@ -10,6 +10,7 @@ import (
 	"../config"
 	"../core"
 	"../storage"
+	"../storage/models"
 	"../storage/mongo"
 	"github.com/graphql-go/graphql"
 )
@@ -41,13 +42,21 @@ func getTaskByID(id string) Task {
 	return convertContractTask(task)
 }
 
+func createTask(name string) string {
+	return dataStorage.GetTaskStorage().StoreTask(&models.Task{
+		ID:   "",
+		Name: name,
+		Logs: []models.LogEntry{},
+	})
+}
+
 func endpoint(w http.ResponseWriter, r *http.Request) {
 	var req map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&req)
 	core.CheckErr(err)
 	query := req["query"].(string)
 
-	schema := getSchema(getTaskByID, getAllTasks)
+	schema := getSchema(getTaskByID, getAllTasks, createTask)
 	params := graphql.Params{
 		Schema:        schema,
 		RequestString: query,

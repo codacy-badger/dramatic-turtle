@@ -23,10 +23,21 @@ func createTaskStorage(m *Mongo, id string) *TaskStorage {
 
 // StoreTask func
 func (ts *TaskStorage) StoreTask(task *models.Task) string {
-	task.ID = objectid.New().Hex()
 	id, err := ts.coll.InsertOne(context.Background(), task)
+	strId := ts.mongo.getID(id)
+	objId, err := objectid.FromHex(strId)
 	core.CheckErr(err)
-	return ts.mongo.getID(id)
+
+	filter := bson.D{
+		{"_id", objId},
+	}
+	update := bson.D{
+		{"$set", bson.D{{"id", strId}}},
+	}
+	_, err = ts.coll.UpdateOne(context.Background(), filter, update)
+
+	core.CheckErr(err)
+	return strId
 }
 
 // ReadTask func
